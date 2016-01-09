@@ -5,26 +5,91 @@
 
 //初期化処理
 $word = "";
+$characterList = "";
 
 //パスワードを生成するためのタネとなる文字列を用意する
-$lowerCaseList   = "abcdefghijkmnpqrstuxyz";
 $upperCaseList   = "ABCDEFGHIJKLMNPQRSTUXY";
-$numberList      = "23456789";
+$lowerCaseList   = "abcdefghijkmnprstuxyz";
+$numberList      = "2345678";
 $specialCharList = "-_";
 
-//文字の塊を連結して１つの文字列とする
-$characterList = $lowerCaseList. $upperCaseList. $numberList. $specialCharList;
+
+if (empty($_POST['number']) || !is_numeric($_POST['number'])) {
+    //有効な数字でない場合はデフォルト値にする
+    $_POST['number'] = 10;
+} else if ($_POST['number'] > 32) {
+    //32文字より大きい場合はMaxの32文字にする
+    $_POST['number'] = 32;
+}
+
+//パスワードに使用する文字の種類を設定する
+if (!empty($_POST['parameter'])) {
+    foreach ($_POST['parameter'] as $value) {
+        switch ($value) {
+            case 1: //「大文字」を連結
+                $characterList .=  $upperCaseList;
+                break;
+
+            case 2: //「小文字」を連結
+                $characterList .=  $lowerCaseList;
+                break;
+
+            case 3: //「数字」を連結
+                $characterList .=  $numberList;
+                break;
+
+            case 4: //「記号」を連結
+                $characterList .=  $specialCharList;
+                break;
+        }
+    }
+} else {
+    //初期は全部入りなのですべての項目にチェックが入っているように設定する
+    $_POST['parameter'] = array(1,2,3,4);
+
+    //文字の塊を連結して１つの文字列とする（何も指定がなければ全部入りにする）
+    $characterList = $lowerCaseList. $upperCaseList. $numberList. $specialCharList;
+}
 
 //乱数のシードを指定する
 mt_srand();
 
 //10文字の乱数を作成する
-for ($i=0; $i<10; $i++) {
+for ($i=0; $i<$_POST['number']; $i++) {
     //0から文字数番目で乱数を生成する（この段階では数字を返す）
     $random = mt_rand(0, (strlen($characterList)));
 
     //乱数で取得した数字番目の文字を１つ文字列の塊から取得する
     $word .= substr($characterList, $random, 1);
+}
+
+
+/**
+ * チェックボックスにチェックされているかを確認する関数
+ * @param $pattern
+ * @param string $type
+ * @return bool|string
+ */
+function checkActiveButton($pattern, $type = 'checked') {
+    //配列になにも入っていなければ抜ける
+    if (empty($_POST['parameter'])) {
+        return false;
+    }
+
+    //チェックボックスにチェックされた回数回ループ動かしてチェックされているか確認する
+    foreach ($_POST['parameter'] as $value) {
+        //チェックボックスのチェック
+        if ($value == $pattern && $type == 'checked') {
+            return "checked='checked'";
+        }
+
+        //ボタンのクラスのチェック
+        if ($value == $pattern && $type == 'active') {
+            return " active";
+        }
+    }
+
+    return false;
 }
 ?>
 <!DOCTYPE html>
@@ -67,21 +132,12 @@ for ($i=0; $i<10; $i++) {
     <div class="container">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header page-scroll">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="https://1weekhack.com" target="_blank">1WeekHack</a>
+            <a class="navbar-brand" href="https://1weekhack.com" target="_blank">パスワード自動生成</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
-                <li class="hidden">
-                    <a href="#page-top"></a>
-                </li>
                 <li class="page-scroll">
                     <a href="https://1weekhack.com" title="Blog" target="_blank">Blog</a>
                 </li>
@@ -98,13 +154,22 @@ for ($i=0; $i<10; $i++) {
         <div class="row">
             <div class="col-lg-12">
                 <div class="intro-text">
-                    <span class="name">パスワード自動生成</span>
-
-                    <hr class="star-light">
-                    <span class="skills"><?php echo $word ?></span>
-                    <hr class="star-light">
-
+                    <span class="name" style="word-break:break-all;"><?php echo $word ?></span>
                     <form action="./index.php" method="post">
+                        <hr class="star-light">
+                        <div class="btn-group" data-toggle="buttons">
+                            <label class="btn btn-default <?php echo checkActiveButton(1, 'active'); ?>"><input type="checkbox" name="parameter[]" value="1" <?php echo checkActiveButton(1); ?>>大文字</label>
+                            <label class="btn btn-default <?php echo checkActiveButton(2, 'active'); ?>"><input type="checkbox" name="parameter[]" value="2" <?php echo checkActiveButton(2); ?>>小文字</label>
+                            <label class="btn btn-default <?php echo checkActiveButton(3, 'active'); ?>"><input type="checkbox" name="parameter[]" value="3" <?php echo checkActiveButton(3); ?>>数字</label>
+                            <label class="btn btn-default <?php echo checkActiveButton(4, 'active'); ?>"><input type="checkbox" name="parameter[]" value="4" <?php echo checkActiveButton(4); ?>>記号</label>
+                        </div>
+                        <div class="input-group" style="width: 283px; margin-top: 15px; margin-right: auto; margin-left: auto; ">
+                            <span class="input-group-addon" id="basic-addon1">文字数</span>
+                            <input type="text" class="form-control" name="number" placeholder="10" aria-describedby="basic-addon1" value="<?php echo $_POST['number']; ?>">
+                        </div>
+                        <hr class="star-light">
+
+                        <input type="hidden" name="flag" value="1">
                         <button type="submit" class="btn btn-default navbar-btn">再表示</button>
                     </form>
                 </div>
