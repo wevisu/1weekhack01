@@ -19,6 +19,9 @@ if (empty($_POST['number']) || !is_numeric($_POST['number'])) {
 } else if ($_POST['number'] > 32) {
     //32文字より大きい場合はMaxの32文字にする
     $_POST['number'] = 32;
+} else if ($_POST['number'] < 4) {
+    //4文字より小さい場合はMinの4文字にする
+    $_POST['number'] = 4;
 }
 
 //パスワードに使用する文字の種類を設定する
@@ -53,7 +56,7 @@ if (!empty($_POST['parameter'])) {
 //１回は動いて欲しいのでdo-whileでパスワード生成
 do {
     //継続条件の初期化
-    $clear_flag    = false;
+    $clear_flag    = array();
 
     //ランダム文字列を作成
     $word = createRandomWord($characterList);
@@ -63,26 +66,26 @@ do {
         switch ($value) {
             case 1:
                 //必要な文字が含まれているかをチェックする
-                $clear_flag = checkCharacter($word, $upperCaseList);
+                $clear_flag[] = checkCharacter($word, $upperCaseList);
                 break;
 
             case 2:
                 //必要な文字が含まれているかをチェックする
-                $clear_flag = checkCharacter($word, $lowerCaseList);
+                $clear_flag[] = checkCharacter($word, $lowerCaseList);
                 break;
 
             case 3:
                 //必要な文字が含まれているかをチェックする
-                $clear_flag = checkCharacter($word, $numberList);
+                $clear_flag[] = checkCharacter($word, $numberList);
                 break;
 
             case 4:
                 //必要な文字が含まれているかをチェックする
-                $clear_flag = checkCharacter($word, $specialCharList);
+                $clear_flag[] = checkCharacter($word, $specialCharList);
                 break;
         }
     }
-} while(!$clear_flag);
+} while(in_array(false, $clear_flag, true));
 
 
 /**
