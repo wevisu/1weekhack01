@@ -4,11 +4,10 @@
  */
 
 //初期化処理
-$word = "";
 $characterList = "";
 
 //パスワードを生成するためのタネとなる文字列を用意する
-$upperCaseList   = "ABCDEFGHIJKLMNPQRSTUXY";
+$upperCaseList   = "ABCDEFGHJKLMNPQRSTUXY";
 $lowerCaseList   = "abcdefghijkmnprstuxyz";
 $numberList      = "2345678";
 $specialCharList = "-_";
@@ -16,7 +15,7 @@ $specialCharList = "-_";
 
 if (empty($_POST['number']) || !is_numeric($_POST['number'])) {
     //有効な数字でない場合はデフォルト値にする
-    $_POST['number'] = 10;
+    $_POST['number'] = 8;
 } else if ($_POST['number'] > 32) {
     //32文字より大きい場合はMaxの32文字にする
     $_POST['number'] = 32;
@@ -51,18 +50,62 @@ if (!empty($_POST['parameter'])) {
     $characterList = $lowerCaseList. $upperCaseList. $numberList. $specialCharList;
 }
 
-//乱数のシードを指定する
-mt_srand();
+//１回は動いて欲しいのでdo-whileでパスワード生成
+do {
+    //継続条件の初期化
+    $clear_flag    = false;
 
-//10文字の乱数を作成する
-for ($i=0; $i<$_POST['number']; $i++) {
-    //0から文字数番目で乱数を生成する（この段階では数字を返す）
-    $random = mt_rand(0, (strlen($characterList)));
+    //ランダム文字列を作成
+    $word = createRandomWord($characterList);
 
-    //乱数で取得した数字番目の文字を１つ文字列の塊から取得する
-    $word .= substr($characterList, $random, 1);
+    //選択されている文字種類が１回以上使用されているかをチェックする
+    foreach ($_POST['parameter'] as $value) {
+        switch ($value) {
+            case 1:
+                //必要な文字が含まれているかをチェックする
+                $clear_flag = checkCharacter($word, $upperCaseList);
+                break;
+
+            case 2:
+                //必要な文字が含まれているかをチェックする
+                $clear_flag = checkCharacter($word, $lowerCaseList);
+                break;
+
+            case 3:
+                //必要な文字が含まれているかをチェックする
+                $clear_flag = checkCharacter($word, $numberList);
+                break;
+
+            case 4:
+                //必要な文字が含まれているかをチェックする
+                $clear_flag = checkCharacter($word, $specialCharList);
+                break;
+        }
+    }
+} while(!$clear_flag);
+
+
+/**
+ * 生成文字を渡して、乱数文字列を生成する関数
+ * @param $characterList
+ * @return string
+ */
+function createRandomWord($characterList) {
+    $word = ""; //初期化
+
+    //乱数のシードを指定する
+    mt_srand();
+
+    for ($i=0; $i<$_POST['number']; $i++) {
+        //0から文字数番目で乱数を生成する（この段階では数字を返す）
+        $random = mt_rand(0, (strlen($characterList)));
+
+        //乱数で取得した数字番目の文字を１つ文字列の塊から取得する
+        $word .= substr($characterList, $random, 1);
+    }
+
+    return $word;
 }
-
 
 /**
  * チェックボックスにチェックされているかを確認する関数
@@ -91,19 +134,36 @@ function checkActiveButton($pattern, $type = 'checked') {
 
     return false;
 }
+
+/**
+ * 文字列内に指定文字が含まれているかをチェックする関数
+ * @param $word
+ * @param $charList
+ * @return bool
+ */
+function checkCharacter($word, $charList) {
+    $checkWord = false;
+    foreach (str_split($charList) as $str) {
+        if (strpos($word, $str) !== false) {
+            $checkWord = true;
+        }
+    }
+
+    return $checkWord;
+}
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 
 <head>
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="パスワードを自動で１つ作成してくれるプログラムです。">
+    <meta name="keywords" content="1weekhack,キーワード生成,自動キーワード生成,ランダムキーワード">
 
-    <title>Freelancer - Start Bootstrap Theme</title>
+    <title>パスワード生成機 -1weekhack-</title>
 
     <!-- Bootstrap Core CSS - Uses Bootswatch Flatly Theme: http://bootswatch.com/flatly/ -->
     <link href="_asset/css/bootstrap.min.css" rel="stylesheet">
@@ -165,7 +225,7 @@ function checkActiveButton($pattern, $type = 'checked') {
                         </div>
                         <div class="input-group" style="width: 283px; margin-top: 15px; margin-right: auto; margin-left: auto; ">
                             <span class="input-group-addon" id="basic-addon1">文字数</span>
-                            <input type="text" class="form-control" name="number" placeholder="10" aria-describedby="basic-addon1" value="<?php echo $_POST['number']; ?>">
+                            <input type="text" class="form-control" name="number" placeholder="8" aria-describedby="basic-addon1" value="<?php echo $_POST['number']; ?>">
                         </div>
                         <hr class="star-light">
 
@@ -186,9 +246,8 @@ function checkActiveButton($pattern, $type = 'checked') {
                 <div class="footer-col col-md-12">
                     <h3>Around the Web</h3>
                     <ul class="list-inline">
-                        <li>
-                            <a href="#" class="btn-social btn-outline"><i class="fa fa-fw fa-twitter"></i></a>
-                        </li>
+                        <li><a href="https://1weekhack.com" class="btn-social btn-outline" target="_blank"><i class="fa fa-fw fa-home"></i></a></li>
+                        <li><a href="https://twitter.com/1weekhack" class="btn-social btn-outline" target="_blank"><i class="fa fa-fw fa-twitter"></i></a></li>
                     </ul>
                 </div>
             </div>
