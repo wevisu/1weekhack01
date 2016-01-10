@@ -98,7 +98,7 @@ function createRandomWord($characterList) {
 
     for ($i=0; $i<$_POST['number']; $i++) {
         //0から文字数番目で乱数を生成する（この段階では数字を返す）
-        $random = mt_rand(0, (strlen($characterList)));
+        $random = mt_rand(0, (strlen($characterList) - 1));
 
         //乱数で取得した数字番目の文字を１つ文字列の塊から取得する
         $word .= substr($characterList, $random, 1);
