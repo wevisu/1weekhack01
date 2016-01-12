@@ -169,13 +169,13 @@ function checkCharacter($word, $charList) {
     <title>パスワード生成機 -1weekhack-</title>
 
     <!-- Bootstrap Core CSS - Uses Bootswatch Flatly Theme: http://bootswatch.com/flatly/ -->
-    <link href="_asset/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/_asset/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="_asset/css/freelancer.css" rel="stylesheet">
+    <link href="/_asset/css/freelancer.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
-    <link href="_asset/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="/_asset/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
 
@@ -268,22 +268,22 @@ function checkCharacter($word, $charList) {
 </footer>
 
 <!-- jQuery -->
-<script src="_asset/js/jquery.js"></script>
+<script src="/_asset/js/jquery.js"></script>
 
 <!-- Bootstrap Core JavaScript -->
-<script src="_asset/js/bootstrap.min.js"></script>
+<script src="/_asset/js/bootstrap.min.js"></script>
 
 <!-- Plugin JavaScript -->
 <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
-<script src="_asset/js/classie.js"></script>
-<script src="_asset/js/cbpAnimatedHeader.js"></script>
+<script src="/_asset/js/classie.js"></script>
+<script src="/_asset/js/cbpAnimatedHeader.js"></script>
 
 <!-- Contact Form JavaScript -->
-<script src="_asset/js/jqBootstrapValidation.js"></script>
-<script src="_asset/js/contact_me.js"></script>
+<script src="/_asset/js/jqBootstrapValidation.js"></script>
+<script src="/_asset/js/contact_me.js"></script>
 
 <!-- Custom Theme JavaScript -->
-<script src="_asset/js/freelancer.js"></script>
+<script src="/_asset/js/freelancer.js"></script>
 
 </body>
 
